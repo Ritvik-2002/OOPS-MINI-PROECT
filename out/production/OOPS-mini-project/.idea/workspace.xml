@@ -2,19 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1991e73a-2926-4376-8e68-2318e84ecbc2" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/Main.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/What to do" beforeDir="false" afterPath="$PROJECT_DIR$/What to do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/carData.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/.idea/.gitignore" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/ConnectionFactory.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/Main.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/What to do" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOPS-mini-project/What to do" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/car.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/carData.csv" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/customer.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/discountCar.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/rental.class" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOPS-mini-project/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/OOPS-mini-project/package2/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/OOPS-mini-project/package2/Main.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package1/ConnectionFactory.java" beforeDir="false" afterPath="$PROJECT_DIR$/package1/ConnectionFactory.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/package2/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/package2/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +24,7 @@
   <component name="PropertiesComponent">
     <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
-    <property name="last_opened_file_path" value="$USER_HOME$/Downloads/mysql-connector-java-8.0.27.jar" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="project.structure.last.edited" value="Modules" />
     <property name="project.structure.proportion" value="0.0" />
     <property name="project.structure.side.proportion" value="0.0" />
@@ -41,7 +33,7 @@
     <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="package2.Main" />
       <module name="OOPS-mini-project" />
-      <option name="PROGRAM_PARAMETERS" value="-initialize" />
+      <option name="PROGRAM_PARAMETERS" value="-booking 3 AP-76 2021-12-05 2021-12-06" />
       <extension name="coverage">
         <pattern>
           <option name="PATTERN" value="package2.*" />

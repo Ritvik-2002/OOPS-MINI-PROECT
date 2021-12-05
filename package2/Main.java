@@ -2,11 +2,25 @@ package package2;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.sql.*;
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 import package1.*;
 
 public class Main {
+    public static void printHelp(){
+        System.out.println("Help for commands:");
+        System.out.println("| -initialize | to initializing the program");
+        System.out.println("| -register <name> <address> <mobile no> | to make an account");
+        System.out.println("| -booking <Cust_id> <Car_no> <start date> <end date> | to book a car, date should be in format(yyyy-MM-dd)");
+        System.out.println("| -cancel <Cust_id> <Car_no> | to cancel your car booking");
+        System.out.println("| -carAmountLessThan <Amount> | to search for car less that cetain amount of rent ");
+        System.out.println("| -searchFirstName <FirstName> | to search customer using first name");
+        System.out.println("| -searchById <Cust_id> | to search customer using cust_id");
+    }
     public static void initialize() {
         try {
             Connection con = ConnectionFactory.createConnection();
@@ -31,17 +45,10 @@ public class Main {
                 ps.executeUpdate();
                 st.close();
             }
-            System.out.println("Program initialised! tables have been made !");
+            System.out.println("Program initialised! tables have been made ! Cars data has been updated!");
         } catch (Exception e) {
             System.out.println("Program have already been initialised!");
         }
-    }
-
-    public static void printHelp() {
-        System.out.println("Help for commands:");
-        System.out.println("-initialize for initializing the program");
-        System.out.println("-b <recordType> <string> for operation on <recordType> and search <string>");
-        System.out.println("-h (or any) for help menu");
     }
 
     public static void register(String[] args) throws Exception {
@@ -87,6 +94,7 @@ public class Main {
         String query3 = "select max(cust_id) from customer;";
         String query4 = "select * from rental;";
         String query5 = "select * from cars;";
+        String SQL = "update cars set availability = ? where car_no = ? ;";
 
         ResultSet rs3 = st3.executeQuery(query3);
         ResultSet rs4 = st4.executeQuery(query4);
@@ -96,15 +104,15 @@ public class Main {
         int maxId = rs3.getInt("max(cust_id)");
         int valid = 1;
         int good = 0;
-        int x = Integer.parseInt(args[1]);
-        while (rs5.next()) {
+        int x= Integer.parseInt(args[1]);
+        while(rs5.next()){
             String car_no = rs5.getString("car_no");
-            if (x < maxId && car_no.equals(args[2])) {
-                good = 1;
+            if(x<=maxId && car_no.equals(args[2])){
+                good =1;
                 break;
             }
         }
-        if (good == 1) {
+        if(good == 1){
             while (rs4.next()) {
                 String car_no = rs4.getString("car_no");
                 Date start = rs4.getDate("start");
@@ -118,18 +126,30 @@ public class Main {
                 }
             }
             if (valid == 1) {
-                PreparedStatement ps1 = con.prepareStatement("insert into rental(cust_id, car_no,start,end) values(?,?,?,?)");
+                PreparedStatement ps1 = con.prepareStatement("insert into rental(cust_id, car_no,start,end,total_fee) values(?,?,?,?,?)");
 
+                int charges = rs5.getInt("charges");
+
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd", Locale.ENGLISH);
+                LocalDate start = LocalDate.parse(args[3], formatter);
+                LocalDate end = LocalDate.parse(args[4], formatter);
+                Period period = Period.between(start, end);
+                int aa = period.getDays() * charges;
                 ps1.setInt(1, x);
                 ps1.setString(2, args[2]);
                 ps1.setString(3, args[3]);
                 ps1.setString(4, args[4]);
+                ps1.setInt(5, aa);
                 ps1.executeUpdate();
                 System.out.println("Car Booked");
-
                 st3.close();
+                PreparedStatement stmt = con.prepareStatement(SQL);
+                stmt.setInt(1, 0);
+                stmt.setString(2, args[2]);
+                stmt.executeUpdate();
             }
-        } else {
+        }
+        else{
             System.out.println("[INVALID] \ncustomer Id or Car number is wrong ! you seems sus ");
         }
 
@@ -139,19 +159,19 @@ public class Main {
         Connection con = ConnectionFactory.createConnection();
         Statement st = con.createStatement();
         String query = "select * from rental;";
+        String SQL = "update cars set availability = ? where car_no = ? ;";
         ResultSet rs = st.executeQuery(query);
         int valid =0;
         while(rs.next()){
             int cust_id= rs.getInt("cust_id");
             int x=Integer.parseInt(args[1]);
             String car_no= rs.getString("car_no");
-            if(x!=cust_id && !(Objects.equals(args[2], car_no))){
-                System.out.println("Car is not booked on ur cust_id\n");
-                valid = 0;
+            if(x==cust_id && (Objects.equals(args[2], car_no))){
+                valid = 1;
                 break;
             }
             else{
-                valid=1;
+                valid=0;
             }
         }
         if(valid ==1){
@@ -161,46 +181,73 @@ public class Main {
             ps.executeUpdate();
             System.out.println("Registration Cancelled");
             st.close();
+            PreparedStatement stmt = con.prepareStatement(SQL);
+            stmt.setInt(1, 1);
+            stmt.setString(2, args[2]);
+            stmt.executeUpdate();
+        }
+        else{
+            System.out.println("Car is not booked on ur cust_id\n");
         }
     }
-    public static void searchFirstName(String[] args) throws Exception {
+    public static void searchFirstName(String[] args) throws Exception{
+        Connection con = ConnectionFactory.createConnection();
+        String query = "select * from customer ;";
+        PreparedStatement stmt = con.prepareStatement(query);
+        ResultSet rs = stmt.executeQuery(query);
+        int valid=0;
+        while(rs.next()) {
+            String name = rs.getString("name");
+            if(Objects.equals(args[1], name)){
+                System.out.println("<<<< Customer found >>>>");
+                System.out.println(" cust_id:"+rs.getInt("cust_id")+ "\n name:" +rs.getString("name") +"\n address:" +rs.getString("address") + "\n ph_no:" +rs.getString("phone_no"));
+                valid=1;
+            }
+        }
+        if(valid ==0){
+            System.out.println("<<<<< Customer with that first name is not found >>>>>");
+        }
+    }
+    public static void searchById(String[] args) throws Exception{
         Connection con = ConnectionFactory.createConnection();
         String query = "select * from customer ;";
         PreparedStatement stmt = con.prepareStatement(query);
         ResultSet rs = stmt.executeQuery(query);
         int valid = 0;
-        while (rs.next()) {
-            String name = rs.getString("name");
-            if (Objects.equals(args[1], name)) {
-                System.out.println("Customer found");
-                System.out.println(" cust_id:" + rs.getInt("cust_id") + "\n name:" + rs.getString("name") + "\n address:" + rs.getString("address") + "\n ph_no:" + rs.getString("phone_no"));
-                valid = 1;
+        int k = Integer.parseInt(args[1]);
+        while(rs.next()) {
+            int id = rs.getInt("cust_id");
+            if(k == id){
+                System.out.println("<<<< Customer found >>>>");
+                System.out.println(" cust_id:"+rs.getInt("cust_id")+ "\n name:" +rs.getString("name") +"\n address:" +rs.getString("address") + "\n ph_no:" +rs.getString("phone_no"));
+                valid=1;
             }
         }
-        if (valid == 0) {
-            System.out.println("Customer with that first name is not found");
+        if(valid ==0){
+            System.out.println("<<<<< Customer with that first name is not found >>>>>");
         }
     }
+
     public static void carAmountLessThan(String[] args) throws Exception{
         Connection con = ConnectionFactory.createConnection();
         String query = "select * from cars";
         PreparedStatement stmt = con.prepareStatement(query);
         ResultSet rs = stmt.executeQuery(query);
         int found=0;
+        System.out.println("\n  <<< Checking Cars With proposed amount " + args[1] +"/- >>>");
         while(rs.next()){
             int charges = rs.getInt("charges");
             int prop_amount = Integer.parseInt(String.valueOf(args[1]));
             int k = Integer.compare(prop_amount, charges);
-
             if(k>0)
             {
-                System.out.println("Cars are found !!!");
-                System.out.println(" car_no:"+rs.getString("car_no")+ "\n Model:" +rs.getString("model") +"\n Availability:" +rs.getInt("availability")+"\n Price:" +rs.getInt("charges"));
+                System.out.println("----------------------------------------------");
+                System.out.println(" car_no:"+rs.getString("car_no")+ "\t Model:" +rs.getString("model") +"\n Availability:" +rs.getInt("availability")+"\t Price:" +rs.getInt("charges"));
                 found=1;
             }
         }
         if(found ==0 ){
-            System.out.println("Cars are not not available for renting with the proposed amount");
+            System.out.println("Sorry!! Cars are not not available for renting with the proposed amount.");
         }
 
     }
@@ -234,6 +281,14 @@ public class Main {
                     a.printStackTrace();
                     }
                 break;
+                case "-searchById":
+                    try{
+                        searchById(args);
+                    }
+                    catch (Exception a){
+                        a.printStackTrace();
+                    }
+                    break;
                 case "-carAmountLessThan":
                     try{
                         carAmountLessThan(args);
